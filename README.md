@@ -1,4 +1,4 @@
-# <img src="https://github.com/MathCheck/MathCheck.github.io/blob/main/static/images/icon.png" width="70" /> MathCheck
+# <img src="https://github.com/MathCheck/MathCheck.github.io/blob/main/static/images/icon.png" width="80" /> MathCheck
 
 **Is Your Model Really A Good Math Reasoner? Evaluating Mathematical Reasoning with Checklist**
 
