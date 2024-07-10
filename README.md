@@ -2,7 +2,7 @@
 
 **Is Your Model Really A Good Math Reasoner? Evaluating Mathematical Reasoning with Checklist**
 
-[**🌐 Homepage**](https://mathcheck.github.io/) | [**🤗 Dataset**](https://huggingface.co/datasets/PremiLab-Math/MathCheck/tree/main) | [**📖 Paper**]() | [**💻 Results**]() 
+[**🌐 Homepage**](https://mathcheck.github.io/) | [**🤗 Dataset**](https://huggingface.co/datasets/PremiLab-Math/MathCheck/tree/main) | [**📖 Paper**]() | [**💻 Results**](https://github.com/PremiLab-Math/MathCheck/tree/main/results) 
 
 
 ## Intro
