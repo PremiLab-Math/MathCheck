@@ -2,7 +2,7 @@
 
 **Is Your Model Really A Good Math Reasoner? Evaluating Mathematical Reasoning with Checklist**
 
-[**🌐 Homepage**](https://mathcheck.github.io/) | [**🤗 Dataset**](https://huggingface.co/datasets/PremiLab-Math/MathCheck/tree/main) | [**📖 Paper**]() | [**💻 Results**](https://github.com/PremiLab-Math/MathCheck/tree/main/results) 
+[**🌐 Homepage**](https://mathcheck.github.io/) | [**🤗 Dataset**](https://huggingface.co/datasets/PremiLab-Math/MathCheck/tree/main) | [**📖 Paper**](https://arxiv.org/abs/2407.08733) | [**💻 Results**](https://github.com/PremiLab-Math/MathCheck/tree/main/results) 
 
 
 ## Intro
@@ -30,5 +30,9 @@ both mathematical reasoning ability and behavior testing. Utilizing MATHCHECK, w
 ## Citation
 ```
 @article{
+zhou2024modelreallygoodmath,
+      title={Is Your Model Really A Good Math Reasoner? Evaluating Mathematical Reasoning with Checklist}, 
+      author={Zihao Zhou and Shudong Liu and Maizhen Ning and Wei Liu and Jindong Wang and Derek F. Wong and Xiaowei Huang and Qiufeng Wang and Kaizhu Huang},
+      year={2024}
 }
 ```
