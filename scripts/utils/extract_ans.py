@@ -6,8 +6,6 @@ import numpy as np
 import openai
 import random
 import time
-import ast
-import sympy
 import copy
 import func_timeout
 from tqdm import tqdm
@@ -67,7 +65,6 @@ REMOVED_EXPRESSIONS = [
 
 
 def extract_outcome_correctness(text):
-    # 优先匹配 "answer is:" 后的第一个单词是否为 "correct" 或 "incorrect"
     answer_pattern = r'The answer is:\s*(\w+)'
     answer_match = re.search(answer_pattern, text, flags=re.IGNORECASE)
     if answer_match:
@@ -75,73 +72,61 @@ def extract_outcome_correctness(text):
         if first_answer in ["correct", "incorrect"]:
             return "Correct" if first_answer == "correct" else "Incorrect"
 
-    # 按照单词边界 使用正则表达式查找所有的"correct"或"incorrect"
     matches = re.findall(r'\b(correct|incorrect)\b', text, flags=re.IGNORECASE)
     if matches:
         last_match = matches[-1].lower()
         return "Correct" if last_match == "correct" else "Incorrect"
 
-    # 如果没有找到任何匹配
     return None
 
 def extract_process_correctness(text):
-    # 首先检查 "all steps are correct"
     if re.search(r'all steps are correct', text, flags=re.IGNORECASE):
         return "All-Correct"
     
-    # 检查 "the answer is" 并提取 "Step X"
     answer_match = re.search(r'The answer is(.*?)(Step \d+)', text, flags=re.IGNORECASE)
     if answer_match:
-        return answer_match.group(2).replace("step","Step")  # 返回 "Step X"
+        return answer_match.group(2).replace("step","Step")  # "Step X"
     
-    # 如果未找到 "Step X"，则查找 "Judgement:" 后的第一个单词
     judgement_match = re.search(r'Judgement:\s*(\w+)', text, flags=re.IGNORECASE)
     if judgement_match:
         judgement_text = judgement_match.group(1)
-        # 确保返回的Step首字母大写，其余小写（如 Judgement: Step2 需要格式化为 Step2）
         if judgement_text.lower().startswith('step'):
             return judgement_text.replace("step","Step")
     
-    # 如果检查所有Step i是否唯一
     all_steps = re.findall(r'Step \d+', text, flags=re.IGNORECASE)
-    unique_steps = set(map(str.lower, all_steps))  # 转为小写并放入集合中以去重
+    unique_steps = set(map(str.lower, all_steps))  
     if len(unique_steps) == 1:
-        return list(unique_steps)[0].capitalize()  # 如果唯一就返回那个Step
+        return list(unique_steps)[0].capitalize()
 
-    # 特殊步骤 "begin(s) or began or start(s) at Step i"
     begins_match = re.search(r'(begin(s)?|began|start(s)?) (at|with) (Step \d+)', text, flags=re.IGNORECASE)
     if begins_match:
-        return begins_match.group(5).capitalize()  # "Step i" 是第五个匹配组
+        return begins_match.group(5).capitalize() 
 
 
-    # 分割文本为句子，提取最后一个句子：判断是Correct还是Step X
     sentences = re.split(r'[.!?]+', text)
     if len(sentences) > 1:
-        last_sentence = sentences[-2].strip()  # 假设最后可能是空句子，取倒数第二个
+        last_sentence = sentences[-2].strip()  
         first_sentence = sentences[0].strip()
     else:
         first_sentence = sentences[0]
-        last_sentence = sentences[0]  # 只有一个句子或最后句子不空
+        last_sentence = sentences[0]  
 
-    # 在最后一个句子中匹配 "Correct" 或 "Step X"
     if " correct" in last_sentence.lower():
         return "All-Correct"
     match_step = re.search(r'Step \d+', last_sentence, re.IGNORECASE)
     if match_step:
-        return match_step.group(0)  # 返回 "Step X"
+        return match_step.group(0)
     
-    # 在第一个句子中匹配 "Correct" 或 "Step X"
+
     if " correct" in first_sentence.lower():
         return "All-Correct"
     match_step = re.search(r'Step \d+', first_sentence, re.IGNORECASE)
     if match_step:
-        return match_step.group(0)  # 返回 "Step X"
+        return match_step.group(0)
     
-    # 如果都不匹配，返回 None
     return None
 
 def extract_answerable(text):
-    # 使用正则表达式查找所有出现的 "Answerable" 或 "Unanswerable"，不考虑大小写
     matches = re.findall(r'(Answerable|Unanswerable)', text, re.IGNORECASE)
 
     if matches:
@@ -151,7 +136,6 @@ def extract_answerable(text):
         elif "answerable" in last_match.lower():
             return "Answerable"
     
-    # 如果没有找到任何匹配，返回 None
     return None
 
 def normalize_final_answer(final_answer: str) -> str:
@@ -189,10 +173,10 @@ def is_number(s):
         float(s)
         return True
     except ValueError:
-        pass  # 占位语句，不做任何处理
+        pass  
     try:
         import unicodedata
-        unicodedata.numeric(s) # 把一个表示数字的字符串，转换成浮点数返回
+        unicodedata.numeric(s) 
         return True
     except (TypeError, ValueError):
         pass
@@ -209,8 +193,8 @@ def delete_extra_zero(n):
     if isinstance(n, int):
         return str(n)
     if isinstance(n, float):
-        n = str(n).rstrip('0')  # 删除小数点后多余的0
-        n = int(n.rstrip('.')) if n.endswith('.') else float(n)  # 只剩小数点直接转int，否则转回float
+        n = str(n).rstrip('0')  
+        n = int(n.rstrip('.')) if n.endswith('.') else float(n)  
         n=str(n)
         return n
 
@@ -487,117 +471,6 @@ def extract_answer_number_mistral(completion):
         return None
 
 
-def parse_pred_ans(preds_str, golds_str, properties_list, true_type_list,
-                   prompt_type="cot", match_pattern="", mv=1, fine_grained=False,
-                   gsm8k_value=0.0, neglect_ncr=False, model_name="", prompt_analysis=False, input_str_list=None):
-    num_q = 0
-    acc = 0
-    results = []
-    preds = []
-    golds = []
-    correct_table = {}
-    cnt_table = {}
-    source_set = set()
-
-    dir_name = os.getcwd().split("MathCheck")[0] + "MathCheck/"
-    all_model_performance_file = os.path.join(dir_name, "results", "model_performance_all.json")
-    all_model_performance = json.load(open(all_model_performance_file))
-    if model_name not in all_model_performance:
-        all_model_performance[model_name] = {}
-    if input_str_list is None:
-        input_str_list = ["" for _ in range(len(preds_str))]
-    for pred_str, gold_str, properties, true_type, input_str, ptype in tqdm(zip(preds_str, golds_str, properties_list, true_type_list, input_str_list, prompt_type), total=len(preds_str)):
-        source = properties['source']
-        source_set.add(source)
-
-        num_q += 1
-        result, pred, gold = test_answer(prompt_type=ptype, match_pattern=match_pattern,
-                                         pred_str=pred_str, ans_str=gold_str, mv=mv, source=true_type, input_str=input_str)
-        results.append(result)
-        preds.append(pred)
-        golds.append(gold)
-        if result:
-            acc += 1
-
-        if source not in correct_table.keys():
-            correct_table[source] = 1 if result else 0
-            cnt_table[source] = 1
-        else:
-            correct_table[source] = (correct_table[source] + 1) if result else correct_table[source]
-            cnt_table[source] += 1
-
-
-    print('num_q %d correct %d ratio %.4f' % (num_q, acc, float(acc / num_q)))
-    acc_table = {}
-    for key in correct_table.keys():
-        acc_table[key] = correct_table[key] / cnt_table[key]
-    acc_table = list(zip(acc_table.keys(), acc_table.values()))
-    acc_table.sort(key=lambda x: x[1])
-
-    fine_type_list = ["numerical substitution", "digit expansion", "integer-decimal-fraction conversion",
-                 "problem understanding", "adding operation", "distractor insertion", "reversing operation"]
-    coarse_type_list = ["gsm8k", "gsmplus"]
-
-    if fine_grained:
-        type_list = fine_type_list
-    else:
-        type_list = coarse_type_list
-
-    if fine_grained and gsm8k_value != 0:
-        all_data_file = "decay_rate_models.json"
-        perf_change_of_all_models_data = json.load(open(all_data_file))
-
-        all_acc_table_color = {}
-        all_decay_table_color = {}
-        print(acc_table)
-        for key, acc in acc_table:
-            this_acc = str(round(acc*100, 2))
-            all_acc_table_color[key] = float(this_acc)
-            all_decay_table_color[key] = str(round(((gsm8k_value - float(this_acc)) / gsm8k_value) * 100, 2))
-        all_acc_str = ""
-        all_decay_str = ""
-        all_acc_list = [gsm8k_value]
-        all_decay_list = [-50]
-
-        if neglect_ncr is False:
-            type_list.append("critical thinking")
-
-        for key in type_list:
-            all_acc_str += str(all_acc_table_color[key]) + ", "
-            all_acc_list.append(all_acc_table_color[key])
-            all_decay_str += all_decay_table_color[key] + ", "
-            all_decay_list.append(all_decay_table_color[key])
-        print("all_acc: ", all_acc_str)
-        print("all_decay: ", all_decay_str)
-
-        perf_change_of_all_models_data["decay_rates"][model_name] = all_decay_list
-        perf_change_of_all_models_data["accuracies"][model_name] = all_acc_list
-        if prompt_analysis is False:
-            json.dump(perf_change_of_all_models_data, open(all_data_file, "w"), indent=4)
-
-    else:
-        for key, acc in acc_table:
-            if key in source_set:
-                print(key + ": " + str(acc))
-                if key == "gsmplus" and neglect_ncr:
-                    key = "gsmplus_wo_ncr"
-                all_model_performance[model_name][key] = str(round(acc*100, 2))
-            else:
-                print("    " + key.split(",")[-1] + " : " + str(acc))
-
-    if prompt_analysis is False:
-        json.dump(all_model_performance, open(all_model_performance_file, "w"), indent=4)
-    else:
-        ps = "["
-        if neglect_ncr is False:
-            type_list.append("critical thinking")
-        for k in type_list:
-            ps += (str(round(dict(acc_table)[k]*100,2)) + ", ")
-        ps += "]"
-        print(ps)
-    return results, preds, golds
-
-
 def write_results_to_pred_file(original_pred_data, preds, golds, results, pred_file, neglect_ncr=False, mv=1, type="json"):
     new_pred_data = []
     for i, item in enumerate(original_pred_data):
@@ -672,7 +545,7 @@ def is_question_sentence(sentence):
 
 
 def contains_chinese(text):
-    pattern = re.compile(r'[\u4e00-\u9fff]')  # Unicode范围包含中文字符
+    pattern = re.compile(r'[\u4e00-\u9fff]')  
     matches = re.findall(pattern, text)
     return bool(matches)
 

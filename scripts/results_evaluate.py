@@ -100,18 +100,9 @@ def get_accuracy(pred_file,check_task):
             golds[item["task_type"]][item["question_type"]].append(gold_a)
             preds[item["task_type"]][item["question_type"]].append(pred_a)
 
-    #为了测试四种任务、四种问题类型的准确率
-    # task_all_num = {"solving":0,"outcome_judging":0,"process_judging":0,"answerable_judging":0}
-    # task_correct_num = {"solving": 0, "outcome_judging": 0, "process_judging": 0, "answerable_judging": 0}
-    # question_all_num = {"seed_question":0,"problem_understanding_question":0,
-    #                     "distractor_insertion_question":0,"scenario_understanding":0}
-    # question_correct_num = {"seed_question":0,"problem_understanding_question":0,
-    #                     "distractor_insertion_question":0,"scenario_understanding":0}
-    # all_num = 0
-    # all_correct = 0
     all_acc = 0
 
-    # 请帮我计算每个task的准确率
+
     for task_type in golds.keys():
         for question_type in golds[task_type].keys():
             assert len(golds[task_type][question_type]) == len(preds[task_type][question_type])
@@ -123,7 +114,6 @@ def get_accuracy(pred_file,check_task):
                 None_num = preds[task_type][question_type].count(None)
                 pred_list = [label_dic[x] for x in preds[task_type][question_type]]
                 gold_list = [label_dic[x] for x in golds[task_type][question_type]]
-                # pred_list = preds[task_type][question_type]
                 labels = ['Incorrect','Correct']
                 # f1 = f1_score(golds[task_type][question_type],pred_list, labels=labels, pos_label='Incorrect')
                 f1 = f1_score(gold_list,pred_list,labels=[0,1],average='macro')
@@ -144,33 +134,17 @@ def get_accuracy(pred_file,check_task):
                 all_acc += f1
             else:
                 for gold, pred in zip(golds[task_type][question_type], preds[task_type][question_type]):
-                    # task_all_num[task_type] += 1
-                    # question_all_num[question_type] += 1
-                    # all_num += 1
-                    # print(f"gold: {gold}, pred: {pred}")
                     if gold == pred:
-                        # all_correct += 1
                         correct += 1
-                        # task_correct_num[task_type] += 1
-                        # question_correct_num[question_type] += 1
                     if pred == None:
                         None_num += 1
                 print(task_type, question_type, len(golds[task_type][question_type]), 'None: '+str(None_num))
                 accuracy_dict[task_type][question_type] = correct / len(golds[task_type][question_type])
                 all_acc += correct / len(golds[task_type][question_type])
-    # print('-'*100)
-    # print("All Acc: " + str(all_acc/16))
-    # for each in task_all_num.keys():
-    #     print(each + ":" + str(task_correct_num[each]/task_all_num[each]))
-    # print('-'*10)
-    # for each in question_all_num.keys():
-    #     print(each + ":" + str(question_correct_num[each]/question_all_num[each]))
-    # print('-' * 100)
 
     return accuracy_dict, all_acc/16
 
 
-# 写一个函数，如果用户输入的check_task是all，那么对task_type_list的每个task调用get_accuracy函数，返回一个字典，key是task，value是对应task的准确率。如果用户输入的check_task不是all，那么只对用户输入的task调用get_accuracy函数，返回一个字典，key是task，value是对应task的准确率。
 def evaluate_accuracy(eval_data,model_name,check_task,check_question,task_prompt):
     accuracy_dict = {}
     pred_file = os.path.join(os.getcwd(), "results", f"{eval_data}_{model_name}_task_{check_task}_question_{check_question}_{task_prompt}_prediction.json")
@@ -180,7 +154,7 @@ def evaluate_accuracy(eval_data,model_name,check_task,check_question,task_prompt
         accuracy_dict, all_acc = get_accuracy(pred_file,check_task)
     return accuracy_dict, all_acc
 
-# 用一个pandas的dataframe来展示task_type和question_type的准确率，index是task_type，columns是question_type
+
 def show_accuracy_checklist(accuracy_dict, all_acc):
     df = pd.DataFrame(accuracy_dict)
 
@@ -232,8 +206,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--eval_data", default="gsm_checklist", type=str, required=True, help="")
     parser.add_argument("--model_name", default="gpt-3.5-turbo-0613", type=str, required=True, help="")
-    # parser.add_argument("--input_file", default="", type=str, required=False, help="")
-    # parser.add_argument("--output_file", default="", type=str, required=True, help="")
     parser.add_argument("--check_task", default="all", type=str, required=False, choices=["all","solving","outcome_judging","process_judging","answerable_judging"])
     parser.add_argument("--check_question", default="all", type=str, required=False, choices=["all","seed_question","problem_understanding_question","distractor_insertion_question","scenario_understanding"])
     parser.add_argument("--task_prompt", default="zeroshot", type=str, required=False)
@@ -243,5 +215,3 @@ if __name__ == '__main__':
     
     show_accuracy_checklist(accuracy_dict, all_acc)
     # python scripts/results_evaluate.py --model_name gpt-3.5-turbo --eval_data gsm_checklist --task_prompt zeroshot
-
-
