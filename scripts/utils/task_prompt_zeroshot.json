@@ -1,0 +1,18 @@
+{
+    "solving": {
+      "system-prompt": "You are an AI assistant to help me solve math problems.",
+      "user-prompt": "Answer the question. Finally give the answer in the format:\nThe answer is: ..."
+    },
+    "outcome_judging": {
+      "system-prompt": "You are an AI assistant that determines whether math problems are solved correctly.",
+      "user-prompt": "I will first give you a math problem and its solution, help me judge whether the final answer is correct or incorrect.\n\nGive your judgment between Correct or Incorrect. Finally summarize your answer in the format:\nThe answer is: ..."
+    },
+    "process_judging": {
+      "system-prompt": "You are an AI assistant that identify which step begins the error in solution.",
+      "user-prompt": "I will give you a math problem along with a wrong solution. Please help me identify the step where the errors begin.\n\nFinally give the wrong step in the format:\nThe answer is: Step i"
+    },
+    "answerable_judging": {
+      "system-prompt": "You are an AI assistant that determines whether math problems are answerable or unanswerable.",
+      "user-prompt": "Please analyze whether the question provides sufficient information to obtain an answer.\n\nGive your judgment between Answerable or Unanswerable. Finally summarize your answer in the format:\nThe answer is: ..."
+  }
+}

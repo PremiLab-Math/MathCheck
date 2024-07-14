@@ -1,0 +1,62 @@
+{
+    "solving": {
+      "system-prompt": "You are an AI assistant to help me solve math problems.",
+      "user-prompt": "Answer the question. Finally give the answer in the format: The answer is: ...\nFollow the given examples and answer the question.",
+      "nshot": [
+      {
+        "Question": "Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?",
+        "Answer": "Step1: Originally, Leah had 32 chocolates.\nStep2: Her sister had 42. So in total they had 32 + 42 = 74.\nStep3: After eating 35, they had 74 - 35 = 39.\nThe answer is 39.<eos>"
+      },
+      {
+        "Question": "Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?",
+        "Answer": "Step1: Jason started with 20 lollipops.\nStep2: Then he had 12 after giving some to Denny.\nStep3: So he gave Denny 20 - 12 = 8.\nThe answer is 8.<eos>"
+      }
+    ]
+    },
+    "outcome_judging": {
+      "system-prompt": "You are an AI assistant that determines whether math problems are solved correctly.",
+      "user-prompt": "I will first give you a math problem and its solution, help me judge whether the final answer is correct or incorrect.\n\nGive your judgment between Correct or Incorrect. Finally summarize your answer in the format: The answer is: ...\nFollow the given examples and give your judgment.",
+      "nshot": [
+      {
+        "Question": "Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?",
+        "Answer": "Step1: Originally, Leah had 32 chocolates.\nStep2: Her sister had 42. So in total they had 32 + 42 = 74.\nStep3: After eating 35, they had 74 - 35 = 39.\nThe answer is 39.",
+        "Judgement": "Step 1 and Step 2 accurately calculate the total number of chocolates they both had originally.\nStep 3 correctly calculates how many they have left after eating 35 chocolates.\nThe answer is: Correct.<eos>"
+      },
+      {
+        "Question": "Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?",
+        "Answer": "Step1: Jason started with 20 lollipops.\nStep2: Then he had 12 after giving some to Denny.\nStep3: So he gave Denny 20 + 12 = 8.\nThe answer is 32.",
+        "Judgement": "Jason ended up with 12 lollipops after giving some to Denny, having started with 20. Therefore, the calculation to find out how many lollipops Jason gave to Denny should be:20 - 12 = 8. \nThe answer is: Incorrect.<eos>"
+      }
+    ]
+    },
+    "process_judging": {
+      "system-prompt": "You are an AI assistant that identify which step begins the error in solution.",
+      "user-prompt": "I will give you a math problem along with a wrong solution. Please help me identify the step where the errors begin.\n\nFinally give the wrong step in the format: The answer is: Step i\nFollow the given examples and give your judgment.",
+      "nshot": [
+      {
+        "Question": "Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?",
+        "Answer": "Step1: Originally, Leah had 32 chocolates.\nStep2: Her sister had 42. So in total they had 32 + 42 = 84.\nStep3: After eating 35, they had 84 - 35 = 49.\nThe answer is 49.",
+        "Judgement": "The judgement of the given steps is as follows:\n\nStep 1: Correctly states Leah's initial amount of chocolates.\n\nStep 2: Incorrectly calculates the total number of chocolates both Leah and her sister had originally. \nThe answer is: Step 2.<eos>"
+      },
+      {
+        "Question": "Jason had 20 lollipops. He gave Denny some lollipops. Now Jason has 12 lollipops. How many lollipops did Jason give to Denny?",
+        "Answer": "Step1: Jason started with 20 lollipops.\nStep2: Then he had 12 after giving some to Denny.\nStep3: So he gave Denny 20 + 12 = 8.\nThe answer is 32.",
+        "Judgement": "The correct method to find out how many lollipops Jason gave to Denny would be to subtract the amount he had left from the amount he started with: 20 - 12 = 8. Thus, The reasoning error begins at Step 3. \nThe answer is: Step 3.<eos>"
+      }
+    ]
+    },
+    "answerable_judging": {
+      "system-prompt": "You are an AI assistant that determines whether math problems are answerable or unanswerable.",
+      "user-prompt": "Please analyze whether the question provides sufficient information to obtain an answer.\n\nGive your judgment between Answerable or Unanswerable. Finally summarize your answer in the format: The answer is: ...\nFollow the given examples and give your judgment.",
+      "nshot": [
+      {
+        "Question": "Leah had 32 chocolates and her sister had 42. If they ate 35, how many pieces do they have left in total?",
+        "Judgement": "The question provides all necessary information to perform the calculation. \nThe answer is: Answerable.<eos>"
+      },
+      {
+        "Question": "Jason had 20 lollipops. He gave Denny some lollipops. How many lollipops did Jason give to Denny?",
+        "Judgement": "The question is not answerable as given. The reason is that there is insufficient information to determine the exact number of lollipops Jason gave to Denny.\nThe answer is: Unanswerable.<eos>"
+      }
+    ]
+  }
+}
