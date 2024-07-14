@@ -33,7 +33,7 @@ python scripts/openai_model_inference.py --input_file geo_checklist.json --model
 ```
 python scripts/results_evaluate.py --model_name gpt-4o --eval_data gsm_checklist --task_prompt zeroshot
 # [MODEL_NAME] can be: gpt-3.5-turbo, gpt-4o, gpt-4-turbo-2024-04-09, etc.
-# [TASK_PROMPT] can be: fewshot, zeroshot, fewshot_deepseek, zeroshot_deepseek
+# [TASK_PROMPT] can be: fewshot, zeroshot
 ```
 
 
