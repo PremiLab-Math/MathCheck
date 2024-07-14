@@ -17,7 +17,24 @@ both mathematical reasoning ability and behavior testing. Utilizing MATHCHECK, w
 ![image](https://github.com/MathCheck/MathCheck.github.io/blob/main/static/images/Overview.png)
 
 
+### Commands for Prediction
+```
+# Call GPT model for GSM-checklist
+python scripts/openai_model_inference.py --input_file gsm_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot > log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
 
+# Call GPT model for GEO-checklist
+python scripts/openai_model_inference.py --input_file geo_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot > log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
+
+# [MODEL_NAME] can be: gpt-3.5-turbo, gpt-4o, gpt-4-turbo-2024-04-09, etc.
+# [TASK_PROMPT] can be: fewshot, zeroshot
+```
+
+### Commands for Score Output
+```
+python scripts/results_evaluate.py --model_name gpt-4o --eval_data gsm_checklist --task_prompt zeroshot
+# [MODEL_NAME] can be: gpt-3.5-turbo, gpt-4o, gpt-4-turbo-2024-04-09, etc.
+# [TASK_PROMPT] can be: fewshot, zeroshot, fewshot_deepseek, zeroshot_deepseek
+```
 
 
 ## Contact
