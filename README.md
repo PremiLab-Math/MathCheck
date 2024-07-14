@@ -17,8 +17,6 @@ both mathematical reasoning ability and behavior testing. Utilizing MATHCHECK, w
 ![image](https://github.com/MathCheck/MathCheck.github.io/blob/main/static/images/Overview.png)
 
 
-## Results
-
 
 
 
@@ -26,4 +24,14 @@ both mathematical reasoning ability and behavior testing. Utilizing MATHCHECK, w
 
 * Zihao Zhou: zihao.zhou@liverpool.ac.uk
 * Shudong Liu: nlp2ct.shudong@gmail.com
+
+## Citation
+```
+@article{zhou2024modelreallygoodmath,
+    title={Is Your Model Really A Good Math Reasoner? Evaluating Mathematical Reasoning with Checklist}, 
+    author={Zihao Zhou and Shudong Liu and Maizhen Ning and Wei Liu and Jindong Wang and Derek F. Wong and Xiaowei Huang and Qiufeng Wang and Kaizhu Huang},
+    year={2024},
+    eprint={2407.08733}
+}
+```
 
