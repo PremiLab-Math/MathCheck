@@ -18,6 +18,8 @@ both mathematical reasoning ability and behavior testing. Utilizing MATHCHECK, w
 
 
 ### Commands for Prediction
+In our paper, we evaluste the base model and mathematical model in few-shot to follow the instructions. For other models, we use zero-shot setting.
+Before prediction, please unzip the images.zip first.
 ```
 # Call GPT model for GSM-checklist
 python scripts/openai_model_inference.py --input_file gsm_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot > log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
