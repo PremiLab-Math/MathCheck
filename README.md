@@ -22,10 +22,15 @@ In our paper, we evaluste the base model and mathematical model in few-shot to f
 Before prediction, please unzip the images.zip first.
 ```
 # Call GPT model for GSM-checklist
-python scripts/openai_model_inference.py --input_file gsm_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot > log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
+python scripts/openai_model_inference.py --input_file gsm_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot
+# Output: log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
 
 # Call GPT model for GEO-checklist
-python scripts/openai_model_inference.py --input_file geo_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot > log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
+python scripts/openai_model_inference.py --input_file geo_checklist.json --model_name gpt-4o  --check_task all --check_question all --task_prompt zeroshot
+# Output:log/gsm_checklist_gpt-3.5-turbo_all_task_question_zeroshot.out
+
+# Call Phi-3V for GEO-checklist, please first refer to https://github.com/modelscope/swift to install requirements
+python scripts/vl_model_inference_phi3.py --input_file geo_checklist.json --check_task all --check_question all --task_prompt zeroshot 
 
 # [MODEL_NAME] can be: gpt-3.5-turbo, gpt-4o, gpt-4-turbo-2024-04-09, etc.
 # [TASK_PROMPT] can be: fewshot, zeroshot
