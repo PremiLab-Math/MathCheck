@@ -1,4 +1,4 @@
-# export PYTHONPATH="/home/LeiFeng/weiliu/MathCheck:$PYTHONPATH"
+# export PYTHONPATH=""
 
 modelname="Meta-Llama-3-8B-Instruct"
 modelpath="meta-llama/Meta-Llama-3-8B-Instruct"

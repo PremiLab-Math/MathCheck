@@ -16,12 +16,9 @@ import sys
 import os
 sys.path.append(os.getcwd().split("MathCheck")[0] + "MathCheck/") # Set all the path as "MathCheck"
 
-
-# openai.api_base = "https://giegie.green/v1"  # 换成代理，一定要加v1
-# OPENAI_KEY = "sk-iMRrZc77AOExOQYG3cBd98A04d53479cB9D5A644B3705aA0"
-
-openai.api_base = "https://api2.aigcbest.top/v1"  # 换成代理，一定要加v1
-OPENAI_KEY = "sk-ERVBBySgrXabbxrx237d62346e904035921d65E5B5Da4630"
+# Set the openai API key and base url
+openai.api_base = "API_BASE" 
+OPENAI_KEY = "API_KEY"
 
 openai.api_key = OPENAI_KEY
 
