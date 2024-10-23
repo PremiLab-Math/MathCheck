@@ -11,40 +11,54 @@ import func_timeout
 from tqdm import tqdm
 from collections import defaultdict, Counter
 from fraction import Fraction
+from joblib import Parallel, delayed
 import sys
 import os
 sys.path.append(os.getcwd().split("MathCheck")[0] + "MathCheck/") # Set all the path as "MathCheck"
 
 
-# OPENAI_KEY = ""
-# openai.api_key = OPENAI_KEY
+# openai.api_base = "https://giegie.green/v1"  # 换成代理，一定要加v1
+# OPENAI_KEY = "sk-iMRrZc77AOExOQYG3cBd98A04d53479cB9D5A644B3705aA0"
+
+openai.api_base = "https://api2.aigcbest.top/v1"  # 换成代理，一定要加v1
+OPENAI_KEY = "sk-ERVBBySgrXabbxrx237d62346e904035921d65E5B5Da4630"
+
+openai.api_key = OPENAI_KEY
 
 
-def invoke_openai(messages, model="gpt-3.5-turbo-0613", mode="", max_num_tokens=512, temperature=0.0, stop=None):
+def invoke_openai(messages, model="o1-preview", mode="", max_num_tokens=512, temperature=0.0, max_retries=10, delay=7, stop=None):
     top_p = 1
     if mode == 'pot':
         stop = ['\n\n']
     max_try = 1
     prediction = ""
     # print(messages)
-    while max_try<2:
+    print(model, end=" ")
+    while max_try<max_retries:
         try:
             response = openai.ChatCompletion.create(
                 model=model,
                 messages=messages,
-                max_tokens=max_num_tokens,
-                temperature=temperature,
-                top_p=top_p,
+                # max_tokens=max_num_tokens,
+                # top_p=top_p,
+                # temperature=temperature,
                 # stop=stop # NOTE: raise: none is not an allowed value (type=type_error.none.not_allowed), temporarily remove it
             )
             prediction = response['choices'][0]['message']['content']
         except Exception as e:
             print("Exception: ",e)
-            time.sleep(random.uniform(3,6))
+            time.sleep(delay)
             max_try +=1
         else:
             break
     return prediction
+
+def batch_inference_api(messages, seed=0, max_retries=10, delay=7, model="o1-preview"):
+    responses = Parallel(n_jobs=20, prefer="threads")(
+        delayed(invoke_openai)(message, model, max_retries=max_retries, delay=delay)
+        for message in tqdm(messages, desc="Processing prompts")  
+    )
+    return responses
 
 
 # Part of the code is modified from the code snippets provided in "Solving Quantitative Reasoning Problems with Language Models" by Lewkowycz et al.

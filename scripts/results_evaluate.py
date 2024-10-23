@@ -22,22 +22,54 @@ heatmap_name_map = {
     "cogvlm-2": "CogVLM2-Llama3-Chat-19B", "Meta-Llama-3-70B-Instruct": "Llama-3-70B-Instruct", "deepseek-chat": "DeepSeek V2", "Mixtral-8x7B-Instruct-v0.1": "Mixtral-8x7B-Instruct",
     "Mixtral-8x7B": "Mixtral-8x7B-Base", "Qwen1.5-72B-Chat": "Qwen1.5-72B-Chat", "phi-3-mini-4k-instruct": "Phi-3-Mini-4K-Instruct", "Phi-3-medium-4k-instruct": "Phi-3-Medium-4K-Instruct",
     "Meta-Llama-3-8B-Instruct": "Llama-3-8B-Instruct", "chatglm3-6b": "ChatGLM3-6B", "deepseek-math-7b-rl": "DeepSeek-Math-7B-RL", "deepseek-math-7b-instruct": "DeepSeek-Math-7B-Instruct",
-    "deepseek-math-7b-base": "DeepSeek-Math-7B-Base", "MetaMath-70B-V1.0": "MetaMath-Llama2-70B"
+    "deepseek-math-7b-base": "DeepSeek-Math-7B-Base", "MetaMath-70B-V1.0": "MetaMath-Llama2-70B",
+    "claude-3-5-sonnet-20240620": "Claude-3.5-Sonnet", "Meta-Llama-3.1-8B-Instruct": "Llama-3.1-8B-Instruct", 
+    "Meta-Llama-3.1-70B-Instruct": "Llama-3.1-70B-Instruct", "gpt-4o-mini": "GPT-4o-Mini",
+    "o1-mini": "O1-Mini", "o1-preview": "O1-Preview"
 }
 
 task_type_list = ["solving","answerable_judging","outcome_judging","process_judging"]
 question_type_list = ["seed_question","problem_understanding_question","distractor_insertion_question","scenario_understanding"]
 
-heatmap_task = ["Seed\nQuestion", "Problem\nUnderstanding", "Distractor\nInsertion", "Scenario\nUnderstanding"]
-heatmap_type = ["Problem\nSolving", "Outcome\nJudging", "Process\n Judging", "Answerable\nJudging"]
+# heatmap_task = ["Seed\nQuestion", "Problem\nUnderstanding", "Distractor\nInsertion", "Scenario\nUnderstanding"]
+# heatmap_type = ["Problem\nSolving", "Outcome\nJudging", "Process\n Judging", "Answerable\nJudging"]
+heatmap_task = ["Original\nProblem", "Problem\nUnderstanding", "Irrelevant\nDisturbance", "Scenario\nUnderstanding"]
+heatmap_type = ["Problem\nSolving", "Answerable\nJudging", "Outcome\nJudging", "Process\n Judging"]
 
+# def draw_heat_map(problem_type, model_name, task_prompt, npdata):
+#     if 'gsm' in problem_type.lower(): # gsm is blue
+#         # cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "deepskyblue"])
+#         cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "deepskyblue" , "#1d4e89"])
+#     elif 'geo' in problem_type.lower(): # geo is red
+#         cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "indianred"]) # indianred, lightcoral, salmon
+
+#     npdata = np.round(npdata * 100, 1)
+
+#     plt.imshow(npdata, cmap=cmap, interpolation='nearest', vmin=0, vmax=100)
+#     plt.xticks(range(len(heatmap_type)), heatmap_type, fontsize=12)
+#     plt.yticks(range(len(heatmap_task)), heatmap_task, fontsize=12)
+    
+#     plt.colorbar()
+
+#     for i in range(npdata.shape[0]):
+#         for j in range(npdata.shape[1]):
+#             color = 'white' if npdata[i, j] > 50 else 'black'
+#             plt.text(j, i, npdata[i, j], ha='center', va='center', color=color,fontsize=12)
+
+#     plt.xticks(np.arange(npdata.shape[1]))
+#     plt.yticks(np.arange(npdata.shape[0]))
+#     plt.title(heatmap_name_map[model_name])
+#     plt.tight_layout()
+
+#     # save the heatmap
+#     plt.savefig('scripts/result_matrix/'+ problem_type + '_' + model_name + '_' + task_prompt + '.png')
 def draw_heat_map(problem_type, model_name, task_prompt, npdata):
     if 'gsm' in problem_type.lower(): # gsm is blue
-        cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "deepskyblue"])
+        cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "deepskyblue" , "#1d4e89"])
     elif 'geo' in problem_type.lower(): # geo is red
-        cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "indianred"]) # indianred, lightcoral, salmon
+        cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ["white", "#DD4045", "darkred"]) # indianred, lightcoral, salmon
 
-    npdata = np.round(npdata * 100, 1)
+    npdata = np.round(npdata* 100, 1) #  
 
     plt.imshow(npdata, cmap=cmap, interpolation='nearest', vmin=0, vmax=100)
     plt.xticks(range(len(heatmap_type)), heatmap_type, fontsize=12)
@@ -48,16 +80,18 @@ def draw_heat_map(problem_type, model_name, task_prompt, npdata):
     for i in range(npdata.shape[0]):
         for j in range(npdata.shape[1]):
             color = 'white' if npdata[i, j] > 50 else 'black'
-            plt.text(j, i, npdata[i, j], ha='center', va='center', color=color,fontsize=12)
+            plt.text(j, i, npdata[i, j], ha='center', va='center', color=color,fontsize=18)
 
     plt.xticks(np.arange(npdata.shape[1]))
     plt.yticks(np.arange(npdata.shape[0]))
-    plt.title(heatmap_name_map[model_name])
+    plt.title(heatmap_name_map[model_name], fontsize=16)
     plt.tight_layout()
 
     # save the heatmap
-    plt.savefig('scripts/result_matrix/'+ problem_type + '_' + model_name + '_' + task_prompt + '.png')
+    plt.savefig('./result_heatmap/'+ problem_type + '_' + model_name + '_' + task_prompt + '.png')
 
+    # clear the plot
+    plt.clf()
 
 def get_answer(check_task, golden_answer, model_prediction):
     golds_str = []
@@ -156,6 +190,7 @@ def evaluate_accuracy(eval_data,model_name,check_task,check_question,task_prompt
 
 
 def show_accuracy_checklist(accuracy_dict, all_acc):
+    # accuracy_dict = [[	93.0,90.2,86.4,86.0], [93.0,89.4,90.8,84.4], [87.6,88.2,84.5,82.2], [86.8,91.8,92.6,68.9]]
     df = pd.DataFrame(accuracy_dict)
 
     save_dict = {}
@@ -165,7 +200,8 @@ def show_accuracy_checklist(accuracy_dict, all_acc):
     for each in df.mean(axis=1).keys():
         save_dict[each] = df.mean(axis=1)[each]
     save_dict['Matrix'] = df.to_numpy().tolist()
-
+    # print("save_dict: ", save_dict)
+    # save_dict = {'All Acc': 87.2, 'solving': 0.9375, 'answerable_judging': 0.9365079365079365, 'outcome_judging': 0.9057539682539683, 'process_judging': 0.9166666666666666, 'seed_question': 0.9057539682539683, 'problem_understanding_question': 1.0, 'distractor_insertion_question': 0.8740079365079365, 'scenario_understanding': 0.9166666666666666, 'Matrix': [[	93.0,90.2,86.4,86.0], [93.0,89.4,90.8,84.4], [87.6,88.2,84.5,82.2], [86.8,91.8,92.6,68.9]]}
 
     print('-'*100)
     print("All Acc: " + str(all_acc))
@@ -181,9 +217,9 @@ def show_accuracy_checklist(accuracy_dict, all_acc):
     print(df)
 
     # draw heat map on np_array
-    # draw_heat_map(args.eval_data, args.model_name, args.task_prompt, np_array)
+    draw_heat_map(args.eval_data, args.model_name, args.task_prompt, np_array)
 
-    # np.save('scripts/result_matrix/'+ args.eval_data + '_' + args.model_name + '_' + args.task_prompt + '.npy', np_array)
+    np.save('scripts/result_matrix/'+ args.eval_data + '_' + args.model_name + '_' + args.task_prompt + '.npy', np_array)
     matrix_name = args.eval_data + '_' + args.model_name + '_' + args.task_prompt
     # save save_dict to json file
     # check whether the current model has been evaluated, all results save in result_matrix.json
